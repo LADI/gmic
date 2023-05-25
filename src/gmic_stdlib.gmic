@@ -770,8 +770,12 @@ reference : skip "${2=}"
 "'sort(X,_is_increasing,_nb_elts,_size_elt)' (sorted values), 'reverse(A)' (reverse order of components), "\
 "'map(X,P,_nb_channelsX,_nb_channelsP,_boundary_conditions)', "\
 "'shift(A,_length,_boundary_conditions)' and 'same(A,B,_nb_vals,_is_case_sensitive)' (vector equality test)."\n\
-"* Function 'normP(u1,...,un)' computes the LP-norm of the specified vector ('P' being an `unsigned integer` constant "\
-"or 'inf'). If 'P' is omitted, the L2 norm is calculated."\n\
+"* Function 'normP(u1,...,un)' computes the LP-norm of the specified vector "\
+"('P' being a constant or 'inf', as in e.g. 'norm1()')."\n\
+"* Function 'normp(V,_p)' computes the Lp-norm of the specified vector 'V'. Here, 'p' can be variable. "\
+"Default value for 'p' is 2."\n\
+"* Function 'unitnorm(V,_p)' returns a normalized version 'V/normp(V)' of specified vector 'V'. "\
+"Default value for 'p' is 2."\n\
 "* Function 'resize(A,size,_interpolation,_boundary_conditions)' returns a resized version of a vector 'A' with "\
 "specified interpolation mode. 'interpolation' can be "\
 "{ -1=none (memory content) | 0=none | 1=nearest | 2=average | 3=linear | 4=grid | 5=bicubic | 6=lanczos }, and "\
@@ -3268,7 +3272,7 @@ _display_quiver : check "${1=16}>0 && ${2=1.5}>=0 && isint(${3=2}) && $3>=0 && $
     eval.. "
       begin(ref(resize([255],s#1,1),C));
       "${-math_lib}"
-      len = norm2(I(x,y));
+      len = norm(I(x,y));
       ang = atan2(i(x,y,0,1),i(x,y,0,0))*180/pi;
       P = [ -0.5,-0.05, 0.3,-0.05, 0.2,-0.25, 0.5,0, 0.2,0.25, 0.3,0.05, -0.5,0.05 ];
       P*=$1*$2*len;
@@ -19489,7 +19493,7 @@ arrow : check "${5=1%}>=0 && ${6=10%}>=0 && ${7=3%}" skip ${8=1}
       y1 = "${"is_percent $4"}"?(h-1)*$4:$4;
       p0 = [x0,y0];
       dp = [x1,y1]-=p0;
-      l = norm2(dp);                       # arrow length
+      l = norm(dp);                       # arrow length
       t = "${"is_percent $5"}"?l*$5:$5;   # thickness
       hl = "${"is_percent $6"}"?l*$6:$6;  # head length
       ht = "${"is_percent $7"}"?l*$7:$7;  # head thickness
@@ -21848,6 +21852,15 @@ focale3d :
 _focale3d :
   e[0--3] "Set 3D focale to $1."
   _focale3d=$1
+
+#@cli fov3d : fov_angle>=0
+#@cli : Set 3D focale to match specified field of vision angle (in degree) for the latest of the selected image.
+#@cli : Return corresponding focale in status.
+#@cli : Default value: 'fov_angle=30'
+fov3d : check "${1=45}>=0 && "$!"==1"
+  e[^-1] "Set 3D focale to have FOV angle of $1 for image$?."
+  if !$1 f3d=0 else f3d:=max(w,h)/2/tan($1°/2) fi
+  f3d $f3d u $f3d
 
 #@cli gaussians3d : _size>0,_opacity
 #@cli : Convert selected 3D objects into set of 3D gaussian-shaped sprites.
@@ -29257,7 +29270,7 @@ spherize : check "${1=50%}>=0 && ${3=0}>=0 && ${6=1}>0 && isint(${8=1}) && $8>=0
       xy = ([x,y] - center)/m2wh1;
       xy = rotf*xy;
       ratio>=1?(xy[1]*=ratio):(xy[0]/=ratio);
-      r = norm2(xy);
+      r = norm(xy);
       z = r<rmax?sign($2)*sqrt(rmax^2 - r^2):0;
       ratio>=1?(xy[1]/=ratio):(xy[0]*=ratio);
       xy = rotb*xy;
@@ -31809,7 +31822,7 @@ math_lib :
     _P1 = P1;
     _P0P1 = _P1;
     _P0P1-=_P0;
-    if (length<0, _P0P1*=-length/100, _P0P1*=length/norm2(_P0P1));
+    if (length<0, _P0P1*=-length/100, _P0P1*=length/norm(_P0P1));
     coords = [ _P0,_P1,_P1,_P1 - rot(angle°)*_P0P1,_P1,_P1 - rot(-angle°)*_P0P1 ];
     repeat (3,_k, polygon(#ind,2,coords[4*_k,2],coords[4*_k+2,2],_opacity,_da_color));
   );
@@ -48931,7 +48944,7 @@ fx_warp_by_intensity :
   ac "_fx_warp_by_intensity ${1-7}",$8
 
 _fx_warp_by_intensity :
-  if $5 f "ni = norm2(R,G,B); J((ni-$3)*$1,(ni-$4)*$2,0,$6,$7)"
+  if $5 f "ni = norm(R,G,B); J((ni-$3)*$1,(ni-$4)*$2,0,$6,$7)"
   else f "j((i-$3)*$1,(i-$4)*$2,0,0,$6,$7)"
   fi
 
