@@ -2205,7 +2205,11 @@ inline void* get_tid() {
 #if defined(__MACOSX__) || defined(__APPLE__)
   void* tid = (void*)(cimg_ulong)getpid();
 #elif cimg_OS==1
+#if defined(__NetBSD__) || defined(cimg_use_pthread) || cimg_display==1
+  void* tid = (void*)(cimg_ulong)pthread_self();
+#else
   void* tid = (void*)(cimg_ulong)syscall(SYS_gettid);
+#endif
 #elif cimg_OS==2
   void* tid = (void*)(cimg_ulong)GetCurrentThreadId();
 #else
@@ -5404,7 +5408,7 @@ gmic& gmic::_run(const CImgList<char>& commands_line, unsigned int& position,
 
     if (is_debug) {
       if (is_start) {
-        print(images,0,"Start G'MIC interpreter (in debug mode).");
+        print(images,0,"Start G'MIC interpreter (debug mode, version %s).\n",cimg_str2(gmic_version));
         debug(images,"Initial command line: '%s'.",starting_commands_line);
         commands_line_to_CImgList(starting_commands_line); // Do it twice, when debug enabled
       }
@@ -15376,7 +15380,7 @@ gmic& gmic::_run(const CImgList<char>& commands_line, unsigned int& position,
                   for (unsigned int i = 0; i<gmic_comslots; ++i)
                     cimglist_for(commands_names[i],l) {
                       const char *const c = commands_names[i][l].data();
-                      const int d = levenshtein(c,name.data() + foff);
+                      const int d = levenshtein(c + (*c=='+'?1:0),name.data() + foff);
                       if (d<dmin) { dmin = d; misspelled = commands_names[i][l].data(); }
                     }
                   if (misspelled)

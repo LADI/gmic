@@ -267,7 +267,9 @@ inline double gmic_mp_store(const double *const ptrs, const unsigned int siz,
 #elif cimg_OS==1
 #include <cerrno>
 #include <sys/resource.h>
+#if !defined(__NetBSD__) && !defined(cimg_use_pthread) && cimg_display!=1
 #include <sys/syscall.h>
+#endif
 #include <signal.h>
 
 #endif // #if cimg_OS==2
