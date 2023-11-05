@@ -3,7 +3,7 @@
 	url = https://github.com/c-koi/zart.git
 [submodule "gmic-qt"]
 	path = gmic-qt
-	url = https://github.com/c-koi/gmic-qt.git
+	url = ../gmic-qt.git
 [submodule "gmic-community"]
 	path = gmic-community
 	url = https://github.com/GreycLab/gmic-community
