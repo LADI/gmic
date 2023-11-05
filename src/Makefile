@@ -391,7 +391,6 @@ lib:
 _lib : libgmic.so use_libgmic
 
 libgmic.so: libgmic.o
-	ar rcs libgmic.a libgmic.o
 ifeq ($(OS),Darwin)
 	$(CXX) -shared -std=c++11 -pedantic -o libgmic.so.$(VERSION) libgmic.o $(LIBS)
 else
@@ -486,7 +485,6 @@ libcgmic_files:
 	@echo " done!"
 
 libcgmic.so: libcgmic.o
-	ar rcs libcgmic.a libcgmic.o
 ifeq ($(OS),Darwin)
 	$(CXX) -shared -o libcgmic.so.$(VERSION) libcgmic.o libgmic.o $(LIBS)
 else
@@ -536,7 +534,6 @@ endif
 _libc_static: libcgmic_files libcgmic_static.so use_libcgmic_static
 
 libcgmic_static.so: libcgmic_static.o
-	ar rcs libcgmic_static.a libcgmic_static.o
 ifeq ($(OS),Darwin)
 	$(CXX) -shared -static -o libcgmic_static.so.$(VERSION) libcgmic_static.o libgmic.o $(PIC) $(CFLAGS) $(LIBS)
 else
