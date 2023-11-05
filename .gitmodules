@@ -1,0 +1,6 @@
+[submodule "zart"]
+	path = zart
+	url = https://github.com/c-koi/zart.git
+[submodule "gmic-qt"]
+	path = gmic-qt
+	url = https://github.com/c-koi/gmic-qt.git
