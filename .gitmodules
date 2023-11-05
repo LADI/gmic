@@ -4,3 +4,9 @@
 [submodule "gmic-qt"]
 	path = gmic-qt
 	url = https://github.com/c-koi/gmic-qt.git
+[submodule "gmic-community"]
+	path = gmic-community
+	url = https://github.com/GreycLab/gmic-community
+[submodule "CImg"]
+	path = CImg
+	url = https://github.com/GreycLab/CImg
